@@ -22,7 +22,7 @@ mongoose.connection.once("open", () => {
 app.use(
   "/graphql",
   graphqlHTTP({
-    schema,
+    schema, // graphql schema
     graphiql: true
   })
 );
