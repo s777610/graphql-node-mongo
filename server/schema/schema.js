@@ -91,7 +91,7 @@ const Mutation = new GraphQLObjectType({
         return author.save();
       }
     },
-    addbook: {
+    addBook: {
       type: BookType,
       args: {
         name: { type: new GraphQLNonNull(GraphQLString) },

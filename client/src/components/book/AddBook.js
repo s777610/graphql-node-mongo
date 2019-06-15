@@ -1,13 +1,22 @@
-import React from "react";
-import { getAuthorsQuery } from "../../queries/queries";
-import { graphql } from "react-apollo";
+import React, { useState } from "react";
+import { getAuthorsQuery, addBookMutation } from "../../queries/queries";
+import { graphql, compose } from "react-apollo";
 
-const AddBook = ({ data }) => {
+const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
+  const [state, setState] = useState({ name: "", genre: "", authorId: "" });
+
   const displayAuthors = () => {
-    if (data.loading) {
+    const { loading, authors } = getAuthorsQuery;
+    if (loading) {
       return <option>Loading Authors ...</option>;
     } else {
-      return data.authors.map(author => {
+      if (authors[0].id !== "default") {
+        authors.unshift({
+          name: "Select Author",
+          id: "default"
+        });
+      }
+      return authors.map(author => {
         return (
           <option key={author.id} value={author.id}>
             {author.name}
@@ -17,22 +26,33 @@ const AddBook = ({ data }) => {
     }
   };
 
+  const submitForm = e => {
+    e.preventDefault();
+    addBookMutation();
+  };
+
+  const onChangeCell = e => {
+    setState({ ...state, [e.target.name]: e.target.value });
+  };
+
   return (
     <div>
-      <form id="add-book">
+      <form id="add-book" onSubmit={e => submitForm(e)}>
         <div className="field">
           <label>Book name:</label>
-          <input type="text" />
+          <input name="name" type="text" onChange={e => onChangeCell(e)} />
         </div>
 
         <div className="field">
           <label>Genre:</label>
-          <input type="text" />
+          <input name="genre" type="text" onChange={e => onChangeCell(e)} />
         </div>
 
         <div className="field">
           <label>Author:</label>
-          <select>{displayAuthors()}</select>
+          <select name="authorId" onChange={e => onChangeCell(e)}>
+            {displayAuthors()}
+          </select>
         </div>
         <button>+</button>
       </form>
@@ -40,4 +60,7 @@ const AddBook = ({ data }) => {
   );
 };
 
-export default graphql(getAuthorsQuery)(AddBook);
+export default compose(
+  graphql(getAuthorsQuery, { name: "getAuthorsQuery" }),
+  graphql(addBookMutation, { name: "addBookMutation" })
+)(AddBook);
