@@ -1,4 +1,5 @@
 import React from "react";
+import BookDetails from "./BookDetails";
 
 import { graphql } from "react-apollo";
 import { getBooksQuery } from "../../queries/queries";
@@ -17,6 +18,7 @@ const BookList = ({ data }) => {
   return (
     <div>
       <ul id="book-list">{displayBooks()}</ul>
+      <BookDetails />
     </div>
   );
 };

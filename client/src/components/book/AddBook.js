@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { getAuthorsQuery, addBookMutation } from "../../queries/queries";
+import {
+  getAuthorsQuery,
+  addBookMutation,
+  getBooksQuery
+} from "../../queries/queries";
 import { graphql, compose } from "react-apollo";
 
 const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
@@ -26,11 +30,12 @@ const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
   };
 
   const submitForm = e => {
-    console.log(state);
     e.preventDefault();
-    // addBookMutation({
-    //   variables: state
-    // });
+
+    addBookMutation({
+      variables: state,
+      refetchQueries: [{ query: getBooksQuery }]
+    });
   };
 
   const onChangeCell = e => {
