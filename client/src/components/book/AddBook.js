@@ -3,19 +3,18 @@ import { getAuthorsQuery, addBookMutation } from "../../queries/queries";
 import { graphql, compose } from "react-apollo";
 
 const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
-  const [state, setState] = useState({ name: "", genre: "", authorId: "" });
+  const [state, setState] = useState({
+    name: "",
+    genre: "",
+    authorId: ""
+  });
 
   const displayAuthors = () => {
     const { loading, authors } = getAuthorsQuery;
+
     if (loading) {
       return <option>Loading Authors ...</option>;
     } else {
-      if (authors[0].id !== "default") {
-        authors.unshift({
-          name: "Select Author",
-          id: "default"
-        });
-      }
       return authors.map(author => {
         return (
           <option key={author.id} value={author.id}>
@@ -27,8 +26,11 @@ const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
   };
 
   const submitForm = e => {
+    console.log(state);
     e.preventDefault();
-    addBookMutation();
+    // addBookMutation({
+    //   variables: state
+    // });
   };
 
   const onChangeCell = e => {
@@ -40,21 +42,32 @@ const AddBook = ({ getAuthorsQuery, addBookMutation }) => {
       <form id="add-book" onSubmit={e => submitForm(e)}>
         <div className="field">
           <label>Book name:</label>
-          <input name="name" type="text" onChange={e => onChangeCell(e)} />
+          <input
+            name="name"
+            type="text"
+            onChange={e => onChangeCell(e)}
+            value={state.name}
+          />
         </div>
 
         <div className="field">
           <label>Genre:</label>
-          <input name="genre" type="text" onChange={e => onChangeCell(e)} />
+          <input
+            name="genre"
+            type="text"
+            onChange={e => onChangeCell(e)}
+            value={state.genre}
+          />
         </div>
 
         <div className="field">
           <label>Author:</label>
           <select name="authorId" onChange={e => onChangeCell(e)}>
+            <option value="">Select Authors</option>
             {displayAuthors()}
           </select>
         </div>
-        <button>+</button>
+        <button disabled={state.authorId === "" ? true : false}>+</button>
       </form>
     </div>
   );
