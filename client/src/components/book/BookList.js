@@ -1,16 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import BookDetails from "./BookDetails";
 
 import { graphql } from "react-apollo";
 import { getBooksQuery } from "../../queries/queries";
 
 const BookList = ({ data }) => {
+  const [selected, setSelected] = useState(null);
+
   const displayBooks = () => {
     if (data.loading) {
       return <div>Loading books ...</div>;
     } else {
       return data.books.map(book => {
-        return <li key={book.id}>{book.name}</li>;
+        return (
+          <li
+            key={book.id}
+            onClick={() => {
+              setSelected(book.id);
+            }}
+          >
+            {book.name}
+          </li>
+        );
       });
     }
   };
@@ -18,7 +29,7 @@ const BookList = ({ data }) => {
   return (
     <div>
       <ul id="book-list">{displayBooks()}</ul>
-      <BookDetails />
+      <BookDetails bookId={selected} />
     </div>
   );
 };
